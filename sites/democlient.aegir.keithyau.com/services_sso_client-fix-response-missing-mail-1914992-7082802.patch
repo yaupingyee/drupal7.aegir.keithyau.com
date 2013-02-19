@@ -1,0 +1,28 @@
+diff --git a/sites/democlient.aegir.keithyau.com/modules/contrib/services_sso_client/services_sso_client.module b/sites/democlient.aegir.keithyau.com/modules/contrib/services_sso_client/services_sso_client.module
+index b55bd91..76dba1b 100644
+--- a/sites/democlient.aegir.keithyau.com/modules/contrib/services_sso_client/services_sso_client.module
++++ b/sites/democlient.aegir.keithyau.com/modules/contrib/services_sso_client/services_sso_client.module
+@@ -825,6 +825,23 @@ function services_sso_client_authenticate_remote(&$form_state) {
+   setcookie($data->session_name, $data->sessid, REQUEST_TIME + 3600 * 24 * 30, $base_path, $common_cookie_domain, FALSE, TRUE);
+   drupal_add_js(array('services_sso_client' => array('data' => $data)), 'setting');
+ 
++  // Fix login.json return no mail problem by retrieve user object again.
++
++  // Create an API account session so we can use it.
++  $session_data = services_sso_client_propagate_api_account();
++
++  // Construct proper cookie using the stored session information.
++  $headers['Cookie'] = $session_data->session_name . '=' . $session_data->sessid;
++
++  // Make request to REST services user.retrieve
++  $response = drupal_http_request($endpoint_url . '/user/' . $data->user->uid . '', array('headers' => $headers));
++
++  $user = json_decode($response->data);
++  $data->user = $user;
++
++  services_sso_client_propagate_api_account($session_data);
++  //End fix.
++
+   // Do all the storing/creating for accounts.
+   $remote_user = $data->user;
+ 
