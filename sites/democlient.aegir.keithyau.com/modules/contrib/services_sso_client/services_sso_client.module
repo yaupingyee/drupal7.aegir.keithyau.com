@@ -804,6 +804,7 @@ function services_sso_client_authenticate_remote(&$form_state) {
 
   // Parse return data.
   $data = json_decode($response->data);
+
   // Fail if no data.
   if (empty($data)) {
     return FALSE;

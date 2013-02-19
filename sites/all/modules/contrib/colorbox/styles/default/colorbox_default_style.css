@@ -41,7 +41,6 @@
   margin: auto;
   border: 0;
   display: block;
-  max-width: none;
 }
 .cboxIframe {
   width: 100%;
@@ -117,8 +116,7 @@
         left: 0;
         color: #535353;
         width: 100%;
-        padding: 4px 6px;
-        box-sizing: border-box;
+        padding: 4px;
       }
       #cboxCurrent {
         position: absolute;
@@ -192,3 +190,8 @@
       #cboxClose:hover {
         background-position: -25px -25px;
       }
+
+/* The following are fixes for IE. */
+.cboxIE6 #cboxTitle {
+  background: #fff;
+}
