@@ -613,10 +613,14 @@ function services_sso_client_update_remote($user) {
 
     // Construct proper cookie using the stored session information.
     $headers['Cookie'] = $data->session_name . '=' . $data->sessid;
-
+  // Fix for no mail return.
     // Make request to REST services user.retrieve
-    $response = drupal_http_request($endpoint_url . '/user/' . $user->remote_uid . '', array('headers' => $headers));
-
+    //$response = drupal_http_request($endpoint_url . '/user/' . $user->remote_uid . '', array('headers' => $headers));
+  $session_data = services_sso_client_propagate_api_account();
+  $headers['Cookie'] = $session_data->session_name . '=' . $session_data->sessid;
+  $response = drupal_http_request($endpoint_url . '/user/' . $user->remote_uid . '', array('headers' => $headers));
+  services_sso_client_propagate_api_account($session_data);
+  // End Fix.
     // Decode response and update the local Drupal user in the DB if necessary.
     if (services_sso_client_verify_response($response)) {
       // Because the request was  user.retrieve, the user object is in the base of $response->data.
